@@ -1,18 +1,19 @@
-# Sistema Biblioteca
+# 📚 Sistema de Biblioteca
 
-Aplicação de console desenvolvida em C# com .NET 10 para gerenciar usuários, livros e empréstimos de uma biblioteca, utilizando SQL Server para persistência dos dados.
+Aplicação de console desenvolvida em C# com .NET 10 e SQL Server para gerenciamento de usuários, livros e empréstimos de uma biblioteca.
 
-## Funcionalidades
+O projeto foi desenvolvido com foco em orientação a objetos, acesso a banco de dados e organização do código em camadas.
+
+## 🚀 Funcionalidades
 
 - Cadastro e listagem de usuários.
 - Cadastro e listagem de livros.
-- Registro de empréstimos com validação da existência do usuário e da disponibilidade do livro.
+- Empréstimo de livros com validação de usuário e disponibilidade.
 - Devolução de livros.
-- Consulta dos empréstimos ativos.
-- Persistência de dados em SQL Server.
-- Utilização de transações para manter a consistência das operações de empréstimo e devolução.
+- Listagem de empréstimos ativos.
+- Uso de transações SQL para manter a consistência das operações de empréstimo e devolução.
 
-## Tecnologias utilizadas
+## 🛠️ Tecnologias utilizadas
 
 - C#
 - .NET 10
@@ -21,8 +22,9 @@ Aplicação de console desenvolvida em C# com .NET 10 para gerenciar usuários, 
 - Microsoft.Data.SqlClient
 - Git e GitHub
 
-## Estrutura do projeto
+## 📂 Estrutura do projeto
 
+```text
 SistemaBiblioteca/
 ├── Data/
 │   └── Conexao.cs
@@ -40,49 +42,82 @@ SistemaBiblioteca/
 │   └── EmprestimoService.cs
 ├── Program.cs
 └── README.md
+```
 
-## Pré-requisitos
+### Organização em camadas
 
-- .NET 10 SDK.
+- **Data:** configuração e conexão com o banco de dados.
+- **Models:** classes que representam usuários, livros e empréstimos.
+- **Repositories:** operações de acesso e persistência de dados.
+- **Services:** regras de negócio e validações.
+- **Program.cs:** ponto de entrada da aplicação.
+
+## ⚙️ Pré-requisitos
+
+Antes de executar o projeto, você precisa ter:
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - SQL Server instalado e em execução.
-- Banco de dados `BibliotecaDB` criado com as tabelas `Usuarios`, `Livros` e `Emprestimos`, incluindo os relacionamentos necessários.
+- Banco de dados `BibliotecaDB` criado e configurado com as tabelas `Usuarios`, `Livros` e `Emprestimos`, incluindo seus relacionamentos.
 
-O banco de dados e suas tabelas precisam estar configurados antes de executar a aplicação.
+## 🔌 Configuração do banco de dados
 
-## Configuração
+A conexão está configurada no arquivo `Data/Conexao.cs`.
 
-1. Clone o repositório e acesse a pasta do projeto.
-2. Abra `Data/Conexao.cs`.
-3. Confira a string de conexão e ajuste o servidor, o banco de dados e o método de autenticação conforme seu ambiente.
-4. Verifique se o banco `BibliotecaDB` e as tabelas necessárias estão disponíveis.
+Exemplo de configuração para um ambiente local com autenticação integrada do Windows:
 
-A configuração local padrão utiliza autenticação integrada do Windows:
-
+```csharp
 Server=localhost;Database=BibliotecaDB;Trusted_Connection=True;TrustServerCertificate=True;
+```
 
-Essa configuração é destinada ao ambiente local de desenvolvimento. Em outros ambientes, utilize as configurações apropriadas para seu servidor e sua política de segurança.
+Se o seu SQL Server utilizar outra instância ou configuração de autenticação, ajuste a string de conexão conforme o seu ambiente.
 
-## Como executar
+## ▶️ Como executar
 
-No terminal, dentro da pasta do projeto, execute:
+Clone o repositório:
 
+```bash
+git clone https://github.com/kauanbackend/SistemaBiblioteca.git
+```
+
+Entre na pasta do projeto:
+
+```bash
+cd SistemaBiblioteca
+```
+
+Restaure as dependências:
+
+```bash
 dotnet restore
+```
+
+Execute a aplicação:
+
+```bash
 dotnet run
+```
 
-Para compilar a versão Release:
+Para compilar em modo Release:
 
+```bash
 dotnet build -c Release
+```
 
-## Organização da aplicação
+## 🎯 Objetivo do projeto
 
-O projeto separa responsabilidades em camadas:
+Este projeto tem como objetivo praticar e consolidar conhecimentos em:
 
-- **Models:** representam as entidades utilizadas pela aplicação.
-- **Repositories:** concentram as operações de acesso ao banco de dados.
-- **Services:** intermediam as operações entre o programa e os repositórios.
-- **Data:** centraliza a criação da conexão com o SQL Server.
-- **Program.cs:** apresenta o menu e coordena a interação com o usuário.
+- Programação orientada a objetos com C#.
+- Organização de aplicações em camadas.
+- Operações CRUD e persistência de dados.
+- Integração entre C# e SQL Server utilizando ADO.NET.
+- Validação de regras de negócio.
+- Transações SQL e consistência de dados.
+- Controle de versão com Git e GitHub.
 
-## Objetivo
+## 👨‍💻 Autor
 
-Projeto de estudo voltado à prática de C#, programação orientada a objetos, operações CRUD, consultas SQL, acesso a dados com ADO.NET, validação de operações e organização de código em camadas.
+**Kauan da Silva**
+
+GitHub: [kauanbackend](https://github.com/kauanbackend)

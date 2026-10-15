@@ -1,9 +1,9 @@
-using System;
-using Microsoft.Data.SqlClient;
-
+﻿using Microsoft.Data.SqlClient;
 class Program
 {
-    static string conexao = "Server=localhost;Database=BibliotecaDB;Trusted_Connection=True;TrustServerCertificate=True;";
+    static readonly UsuarioService usuarioService = new();
+    static readonly LivroService livroService = new();
+    static readonly EmprestimoService emprestimoService = new();
 
     static void Main()
     {
@@ -12,264 +12,192 @@ class Program
         do
         {
             Console.WriteLine("\n--- SISTEMA BIBLIOTECA ---");
-            Console.WriteLine("1 - Cadastrar usu�rio");
-            Console.WriteLine("2 - Listar usu�rio");
+            Console.WriteLine("1 - Cadastrar usuário");
+            Console.WriteLine("2 - Listar usuários");
             Console.WriteLine("3 - Cadastrar livro");
-            Console.WriteLine("4 - Listar livro");
+            Console.WriteLine("4 - Listar livros");
             Console.WriteLine("5 - Emprestar livro");
             Console.WriteLine("6 - Devolver livro");
-            Console.WriteLine("7 - Listar empr�stimos");
+            Console.WriteLine("7 - Listar empréstimos");
             Console.WriteLine("0 - Sair");
+            Console.Write("Escolha: ");
 
-            Console.WriteLine("Escolha:");
-            opcao = int.Parse(Console.ReadLine() ?? "0");
+            if (!int.TryParse(Console.ReadLine(), out opcao))
+            {
+                Console.WriteLine("Opção inválida.");
+                continue;
+            }
 
-            switch(opcao)
+            switch (opcao)
             {
                 case 1:
-                CadastrarUsuario();
-                break;
+                    CadastrarUsuario();
+                    break;
 
                 case 2:
-                ListarUsuario();
-                break;
+                    ListarUsuarios();
+                    break;
 
                 case 3:
-                CadastrarLivro();
-                break;
+                    CadastrarLivro();
+                    break;
 
                 case 4:
-                ListarLivro();
-                break;
+                    ListarLivros();
+                    break;
 
                 case 5:
-                EmprestarLivro();
-                break;
+                    EmprestarLivro();
+                    break;
 
                 case 6:
-                DevolverLivro();
-                break;
+                    DevolverLivro();
+                    break;
 
                 case 7:
-                ListarEmprestimos();
-                break;
+                    ListarEmprestimos();
+                    break;
 
                 case 0:
-                Console.WriteLine("Saindo...");
-                break;
+                    Console.WriteLine("Saindo...");
+                    break;
 
                 default:
-                Console.WriteLine("Op��o inv�lida.");
-                break;
+                    Console.WriteLine("Opção inválida.");
+                    break;
             }
-        }while(opcao !=0);
+
+        } while (opcao != 0);
     }
 
     static void CadastrarUsuario()
     {
-        Console.Write("Nome:");
-        string nome = Console.ReadLine()??"";
+        Console.Write("Nome: ");
+        string nome = Console.ReadLine() ?? "";
 
-        Console.Write("Idade:");
-        int idade = int.Parse(Console.ReadLine() ??"0");
+        Console.Write("Idade: ");
 
-        using(SqlConnection connection = new SqlConnection(conexao))
+        if (!int.TryParse(Console.ReadLine(), out int idade))
         {
-            connection.Open();
-
-            string sql = "INSERT INTO Usuarios(Nome, Idade) VALUES(@Nome, @Idade)";
-
-            using(SqlCommand cmd = new SqlCommand(sql,connection))
-            {
-                cmd.Parameters.AddWithValue("@Nome", nome);
-                cmd.Parameters.AddWithValue("@Idade", idade);
-
-                cmd.ExecuteNonQuery();
-            }
+            Console.WriteLine("Idade inválida.");
+            return;
         }
 
-        Console.WriteLine("Usu�rio cadastrado!");
+        usuarioService.Cadastrar(nome, idade);
+        Console.WriteLine("Usuário cadastrado!");
     }
 
-    static void ListarUsuario()
+    static void ListarUsuarios()
     {
-        using(SqlConnection connection = new SqlConnection(conexao))
+        List<Usuario> usuarios = usuarioService.Listar();
+
+        foreach (Usuario usuario in usuarios)
         {
-            connection.Open();
-
-            string sql = "SELECT * FROM Usuarios";
-
-            using(SqlCommand cmd = new SqlCommand(sql,connection))
-            {
-                using(SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while(reader.Read())
-                    {
-                        Console.WriteLine(
-                        $"{reader["Id"]} - {reader["Nome"]} - {reader["Idade"]}"
-                        );
-                    }
-                }
-            }
+            Console.WriteLine(
+                $"{usuario.Id} - {usuario.Nome} - {usuario.Idade}");
         }
     }
 
     static void CadastrarLivro()
     {
-        Console.Write("Titulo:");
-        string titulo = Console.ReadLine()??"";
+        Console.Write("Título: ");
+        string titulo = Console.ReadLine() ?? "";
 
-        Console.Write("Autor:");
-        string autor = Console.ReadLine()??"";
+        Console.Write("Autor: ");
+        string autor = Console.ReadLine() ?? "";
 
-        using(SqlConnection connection = new SqlConnection(conexao))
-        {
-            connection.Open();
-
-            string sql = "INSERT INTO Livros (Titulo, Autor, Disponivel) VALUES(@Titulo, @Autor, 1)";
-
-            using(SqlCommand cmd = new SqlCommand(sql,connection))
-            {
-                cmd.Parameters.AddWithValue("@Titulo", titulo);
-                cmd.Parameters.AddWithValue("@Autor", autor);
-
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        Console.WriteLine("Livro Cadastrado!");
+        livroService.Cadastrar(titulo, autor);
+        Console.WriteLine("Livro cadastrado!");
     }
 
-    static void ListarLivro()
+    static void ListarLivros()
     {
-        using(SqlConnection connection = new SqlConnection(conexao))
+        List<Livro> livros = livroService.Listar();
+
+        foreach (Livro livro in livros)
         {
-            connection.Open();
+            string disponibilidade = livro.Disponivel
+                ? "Disponível"
+                : "Emprestado";
 
-            string sql = "SELECT * FROM Livros";
-
-            using(SqlCommand cmd = new SqlCommand(sql,connection))
-            {
-                using(SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while(reader.Read())
-                    {
-                        Console.WriteLine(
-                            $"{reader["Id"]} - {reader["Titulo"]} - {reader["Autor"]}"
-                        );
-                    }
-                }
-            }
+            Console.WriteLine(
+                $"{livro.Id} - {livro.Titulo} - {livro.Autor} - {disponibilidade}");
         }
     }
+static void EmprestarLivro()
+{
+    Console.Write("ID do usuário: ");
 
-    static void EmprestarLivro()
+    if (!int.TryParse(Console.ReadLine(), out int usuarioId))
     {
-        Console.Write("ID do usu�rio: ");
-        int usuarioId = int.Parse(Console.ReadLine()?? "0");
-
-        Console.Write("ID do livro: ");
-        int livroId = int.Parse(Console.ReadLine()?? "0");
-
-        using(SqlConnection connection = new SqlConnection(conexao))
-        {
-            connection.Open();
-
-            string verificarLivro = "SELECT Disponivel FROM Livros WHERE Id = @LivroId";
-
-            using(SqlCommand verificarCmd = new SqlCommand(verificarLivro, connection))
-            {
-                verificarCmd.Parameters.AddWithValue("@LivroId", livroId);
-
-                object resultado = verificarCmd.ExecuteScalar();
-
-                if(resultado != null && !(bool)resultado)
-                {
-                    Console.WriteLine("Livro j� emprestado.");
-                    return;
-                }
-            }
-
-            string sqlEmprestimo = "INSERT INTO Emprestimos (UsuarioId, LivroId) VALUES (@UsuarioId, @LivroId)";
-
-            using(SqlCommand cmd = new SqlCommand(sqlEmprestimo, connection))
-            {
-                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
-                cmd.Parameters.AddWithValue("@LivroId", livroId);
-                cmd.ExecuteNonQuery();
-            }
-
-            string sqlLivro = "UPDATE Livros SET Disponivel = 0 WHERE Id = @LivroId ";
-
-            using(SqlCommand cmd = new SqlCommand(sqlLivro, connection))
-            {
-                cmd.Parameters.AddWithValue("@LivroId", livroId);
-
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        Console.WriteLine("Livro emprestado com sucesso!");
+        Console.WriteLine("ID de usuário inválido.");
+        return;
     }
 
+    Console.Write("ID do livro: ");
+
+    if (!int.TryParse(Console.ReadLine(), out int livroId))
+    {
+        Console.WriteLine("ID de livro inválido.");
+        return;
+    }
+
+    try
+    {
+        if (!emprestimoService.UsuarioExiste(usuarioId))
+        {
+            Console.WriteLine("Usuário não encontrado.");
+            return;
+        }
+
+        if (!emprestimoService.LivroEstaDisponivel(livroId))
+        {
+            Console.WriteLine("Livro indisponível ou não encontrado.");
+            return;
+        }
+
+        bool emprestado = emprestimoService.RegistrarEmprestimo(
+            usuarioId, livroId);
+
+        Console.WriteLine(emprestado
+            ? "Livro emprestado com sucesso!"
+            : "Não foi possível emprestar. Verifique a disponibilidade do livro.");
+    }
+    catch (SqlException)
+    {
+        Console.WriteLine(
+            "Erro ao acessar o banco de dados. Nenhum sucesso foi confirmado.");
+    }
+    catch (Exception)
+    {
+        Console.WriteLine("Ocorreu um erro inesperado ao realizar o empréstimo.");
+    }
+}
     static void DevolverLivro()
     {
-        Console.Write("Id do livro: ");
-        int livroId = int.Parse(Console.ReadLine()?? "0");
+        Console.Write("ID do livro: ");
 
-        using(SqlConnection connection = new SqlConnection(conexao))
+        if (!int.TryParse(Console.ReadLine(), out int livroId))
         {
-            connection.Open();
-
-            string sqlEmprestimo = "DELETE FROM Emprestimos WHERE LivroId = @LivroId";
-
-            using(SqlCommand cmd = new SqlCommand(sqlEmprestimo, connection))
-            {
-                cmd.Parameters.AddWithValue("@LivroId", livroId);
-
-                cmd.ExecuteNonQuery();
-            }
-
-            string sqlLivro = "UPDATE Livros SET Disponivel = 1 WHERE Id = @LivroId";
-
-            using(SqlCommand cmd = new SqlCommand(sqlLivro, connection))
-            {
-                cmd.Parameters.AddWithValue("@LivroId", livroId);
-
-                cmd.ExecuteNonQuery();
-            }
+            Console.WriteLine("ID de livro inválido.");
+            return;
         }
 
-        Console.WriteLine("Livro devolvido com sucesso!");
+        bool devolvido = emprestimoService.DevolverLivro(livroId);
+
+        Console.WriteLine(devolvido
+            ? "Livro devolvido com sucesso!"
+            : "Nenhum empréstimo encontrado para esse livro.");
     }
 
     static void ListarEmprestimos()
     {
-        using(SqlConnection connection = new SqlConnection(conexao))
+        List<Emprestimo> emprestimos = emprestimoService.Listar();
+
+        foreach (Emprestimo emprestimo in emprestimos)
         {
-
-            connection.Open();
-
-        string sql = @"
-        SELECT
-        U.Nome AS Usuario,
-        L.Titulo AS Livro
-        FROM Emprestimos E
-        INNER JOIN Usuarios U ON E.UsuarioId = U.Id
-        INNER JOIN Livros L ON E.LivroId = L.Id";
-
-        using(SqlCommand cmd = new SqlCommand(sql, connection))
-            {
-                using(SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while(reader.Read())
-                    {
-                        Console.WriteLine(
-                            $"{reader["Usuario"]} - {reader["Livro"]}"
-                        );
-                    }
-                }
-            }
+            Console.WriteLine(
+                $"{emprestimo.Usuario} - {emprestimo.Livro}");
         }
     }
 }

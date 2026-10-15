@@ -23,18 +23,18 @@ Aplicação de console desenvolvida em C# com .NET 10 para gerenciar usuários, 
 
 ## Estrutura do projeto
 
-SistemaBiblioteca
-├── Data
+SistemaBiblioteca/
+├── Data/
 │   └── Conexao.cs
-├── Models
+├── Models/
 │   ├── Usuario.cs
 │   ├── Livro.cs
 │   └── Emprestimo.cs
-├── Repositories
+├── Repositories/
 │   ├── UsuarioRepository.cs
 │   ├── LivroRepository.cs
 │   └── EmprestimoRepository.cs
-├── Services
+├── Services/
 │   ├── UsuarioService.cs
 │   ├── LivroService.cs
 │   └── EmprestimoService.cs

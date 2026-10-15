@@ -1,9 +1,9 @@
-Ôªøusing System;
+using System;
 using Microsoft.Data.SqlClient;
 
 class Program
 {
-    static string conexao = "Server=localhost\\SQLEXPRESS;Database=BibliotecaDB;Trusted_Connection=True;TrustServerCertificate=True;";
+    static string conexao = "Server=localhost;Database=BibliotecaDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
     static void Main()
     {
@@ -12,13 +12,13 @@ class Program
         do
         {
             Console.WriteLine("\n--- SISTEMA BIBLIOTECA ---");
-            Console.WriteLine("1 - Cadastrar usu√°rio");
-            Console.WriteLine("2 - Listar usu√°rio");
+            Console.WriteLine("1 - Cadastrar usu·rio");
+            Console.WriteLine("2 - Listar usu·rio");
             Console.WriteLine("3 - Cadastrar livro");
             Console.WriteLine("4 - Listar livro");
             Console.WriteLine("5 - Emprestar livro");
             Console.WriteLine("6 - Devolver livro");
-            Console.WriteLine("7 - Listar empr√©stimos");
+            Console.WriteLine("7 - Listar emprÈstimos");
             Console.WriteLine("0 - Sair");
 
             Console.WriteLine("Escolha:");
@@ -59,7 +59,7 @@ class Program
                 break;
 
                 default:
-                Console.WriteLine("Op√ß√£o inv√°lida.");
+                Console.WriteLine("OpÁ„o inv·lida.");
                 break;
             }
         }while(opcao !=0);
@@ -88,7 +88,7 @@ class Program
             }
         }
 
-        Console.WriteLine("Usu√°rio cadastrado!");
+        Console.WriteLine("Usu·rio cadastrado!");
     }
 
     static void ListarUsuario()
@@ -165,10 +165,10 @@ class Program
 
     static void EmprestarLivro()
     {
-        Console.Write("ID do usu√°rio: ");
+        Console.Write("ID do usu·rio: ");
         int usuarioId = int.Parse(Console.ReadLine()?? "0");
 
-        Console.Write("ID do livro");
+        Console.Write("ID do livro: ");
         int livroId = int.Parse(Console.ReadLine()?? "0");
 
         using(SqlConnection connection = new SqlConnection(conexao))
@@ -185,7 +185,7 @@ class Program
 
                 if(resultado != null && !(bool)resultado)
                 {
-                    Console.WriteLine("Livro j√° emprestado.");
+                    Console.WriteLine("Livro j· emprestado.");
                     return;
                 }
             }
@@ -247,12 +247,13 @@ class Program
     {
         using(SqlConnection connection = new SqlConnection(conexao))
         {
+
             connection.Open();
 
         string sql = @"
         SELECT
-        U.Nome AS Usuario
-        L.Nome AS Livro
+        U.Nome AS Usuario,
+        L.Titulo AS Livro
         FROM Emprestimos E
         INNER JOIN Usuarios U ON E.UsuarioId = U.Id
         INNER JOIN Livros L ON E.LivroId = L.Id";

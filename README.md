@@ -13,6 +13,17 @@ O projeto foi desenvolvido com foco em orientação a objetos, acesso a banco de
 - Listagem de empréstimos ativos.
 - Uso de transações SQL para manter a consistência das operações de empréstimo e devolução.
 
+## 📸 Demonstração do sistema
+
+### Menu principal
+![Menu principal do SistemaBiblioteca](docs/menu-principal.png)
+
+### Listagem de livros
+![Listagem de livros cadastrados](docs/listar-livros.png)
+
+### Empréstimo de livro
+![Operação de empréstimo de livro](docs/emprestimo-livro.png)
+
 ## 🛠️ Tecnologias utilizadas
 
 - C#
